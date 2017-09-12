@@ -29,6 +29,7 @@ const padCharY = 10     // padding around each character
 var charmap = map[int]image.Image{}
 var charWidth, charHeight int
 
+// Sets a solid color on an image
 func clearImage(img image.Image, c color.Color) {
 	m := img.(setter)
 	bounds := img.Bounds()
@@ -39,6 +40,7 @@ func clearImage(img image.Image, c color.Color) {
 	}
 }
 
+// Writes the image to a file
 func writeImage(img image.Image, file string) {
 	f, err := os.Create(file)
 	if err != nil {
@@ -53,14 +55,17 @@ func writeImage(img image.Image, file string) {
 	}
 }
 
+// Convenience interface
 type subimager interface {
 	SubImage(r image.Rectangle) image.Image
 }
 
+// Convenience interface
 type setter interface {
 	Set(x, y int, c color.Color)
 }
 
+// genCode will generate 12 bytes given a seed and offset
 // seed: a seed phrase
 // offset: 0, 1, 2, ...
 // returns: 12 bytes
@@ -69,7 +74,7 @@ func genCode(seed string, offset int) []byte {
 	return hash[:12]
 }
 
-// writes an image of 6x4 hex letters
+// genStamp writes an image (stamp) of 6x4 hex letters for genCode result bytes
 func genStamp(seed string, offset int) image.Image {
 	code := genCode(seed, offset)
 	rect := image.Rect(0, 0,
@@ -102,7 +107,7 @@ func genStamp(seed string, offset int) image.Image {
 	return stamp
 }
 
-// writes stamps on a page
+// genPage creates an image with many stamps on a page
 func genPage(seed string, pageNum int, numCols int, numRows int) image.Image {
 	// First, get sample
 	stamp := genStamp(seed, 0)
